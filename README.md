@@ -1,6 +1,6 @@
 ## 1. Go to branch demo.
 ## 2. Clone that branch into your local directory on PC.
-## 3. You have to start from a file "part1.c" this is a file, where you will have ready STRUCT with data fetched from a file data.txt.
+## 3. You have to start from a file "prog.c" this is a file, where you will have ready STRUCT with data fetched from a file data.txt.
 ### 3.1 I've left comments in a code in order to better understand what's going on.
 ## 4. Your task is to make an algorithm, that will iterate, let's say 5000 times and during those iteration it will change logic gate value dependending on some conditions.
 ## 5. Look at this little demo, try to understand and implement:
