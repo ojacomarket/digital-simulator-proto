@@ -76,5 +76,5 @@ struct gate1 {
     int *inputs[MAX_INPUT] = a, x2; // don't update this (this is pointers, they will assign values as any changes been made)
 }
 ```
-## 8. So you build up algorithm ON TOP of the existing code, and basically all you need is this struct array, which is already inside a file "part1.c".
+## 8. So you build up algorithm ON TOP of the existing code, and basically all you need is this struct array, which is already inside a file "prog.c".
 ## 9. All other logic you implement by your self.
