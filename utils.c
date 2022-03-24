@@ -13,7 +13,7 @@ Gate *fillLogicGates(unsigned char **buffer, uint64_t lines) {
     unsigned char reading; // Get ASCII symbol from buffer.
     uint8_t current = 1; // Variable to control current portion of data we are parsing.
     enum PROGRAM_STATES_ENUM state = 0; // State is used to tell program, which datatype we are parsing.
-    LogicGate gates[] =   {not, and, or, xor, nand, nor, gen}; // Type of logic gates.
+    LogicGate gates[] = {not, and, or, xor, nand, nor, gen}; // Type of logic gates.
     int sym = 0; // Tracker of symbol inside a buffer.
     unsigned char temp[20]; // Temporary buffer, to store data, that might be longer than one symbol.
     uint8_t counter = 0; // Counter of symbols in temporary "temp" array.
@@ -248,11 +248,72 @@ uint64_t isFoundLogicGate(size_t *pattern, Gate *source, uint64_t size) {
 
         // We check logic gate type from pre-defined list of logic gates.
         coincidence = strcmp((const char *) pattern, (const char *) source[i].name);
-        //  printf("$IKI BRIKI\n");
+
         // If logic gate type is valid.
         if (!coincidence) {
             return i;
         }
     }
     return size;
+}
+
+void updateGates(Gate *system, uint64_t systemElements, uint64_t timer) {
+
+    for (int i = 0; i < systemElements; ++i) {
+
+        if (system[i].buffer.value != system[i].output.value && !system[i].valuesHasBeenChanged &&
+            system[i].type != gen) {
+            system[i].valuesHasBeenChanged = 1;
+            system[i].timing = timer;
+            system[i].timing = system[i].timing + system[i].delay;
+        }
+
+        if (system[i].type == gen) {
+            if ((system[i].timing + system[i].delay) == timer) {
+                system[i].output.value = system[i].output.value + 1;
+                system[i].timing = timer;
+            }
+        }
+        if (!system[i].valuesHasBeenChanged) {
+            logicgate((const Boolean *) system[i].inputValues, &system[i].buffer, system[i].inputAmount,
+                      system[i].type);
+        }
+    }
+}
+
+void calculateGates(Gate *system, uint64_t systemElements, uint64_t timer) {
+
+    for (int i = 0; i < systemElements; ++i) {
+
+        if (system[i].timing == timer && timer > 0 && system[i].type != gen) {
+            system[i].output.value = system[i].buffer.value;
+            system[i].valuesHasBeenChanged = 0;
+        }
+    }
+}
+
+void runSimulator(Gate *system, uint64_t systemElements) {
+
+    for (int clock = 0; clock < 15; ++clock) {
+        printf("Processor clock: ==========> %d\n", clock);
+        updateGates(system, systemElements, clock);
+        calculateGates(system, systemElements, clock);
+        fancyOutput(system, systemElements);
+        printf("\n\n");
+    }
+}
+
+
+void fancyOutput(Gate *system, uint64_t systemElements) {
+
+    for (int index = 0; index < systemElements; ++index) {
+
+        printf("{Name: %3s, Type: %3d, Output: %3d, Buffer: %3d, Timing: %3lu, Delay: %d, Inputs: %3d}\n",
+               system[index].name,
+               system[index].type, system[index].output.value,
+               system[index].buffer.value,
+               system[index].timing,
+               system[index].delay,
+               system[index].inputAmount);
+    }
 }

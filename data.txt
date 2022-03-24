@@ -3,7 +3,7 @@ y nor 1 t2 t3
 t1 nor 1 a c
 t2 and 2 a c
 t3 and 2 c bi
-bi not 0 b
-a gen 400 0
-b gen 200 0
-c gen 100 0
+bi not 1 b
+a gen 1 0
+b gen 3 0
+c gen 4 0

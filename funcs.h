@@ -30,20 +30,24 @@ enum PROGRAM_STATES_ENUM {
 #pragma push(1)
 typedef struct {
     Boolean output;
-    Boolean** inputValues;
+    _Bool valuesHasBeenChanged;
+    Boolean **inputValues;
+    Boolean buffer;
     uint8_t inputAmount;
     uint16_t delay; // Timestamp, that will indicate the moment of changing a signal value (value of logic gate output).
+    uint64_t timing;
     unsigned char name[GATE_NAME]; // Logic gate unique name.
     LogicGate type; // Type of logic gate.
 } Gate;
 #pragma pop(0)
+
 /**
  * Read file, parse into struct.
  * @param [ uint64_t ]: variable, that will store how many lines were red from a file.
  * @param [ struct gate*** ]: custom data type, that will store parsed data.
  * @param [ char** ]: terminal arguments (file name).
  */
-extern Gate* part1(uint64_t *, char **);
+extern Gate *digitalSimulator(uint64_t *bufferLines, char **argv);
 
 // If you find "#define AUTHORIZED" in some file's head, then know, that it can "see" following contents.
 #ifdef AUTHORIZED_1
@@ -117,7 +121,7 @@ extern void flush(unsigned char *, int);
  * @param [ uint8_t ]: size of buffer's line length.
  * @return [ int ]: 0 if good, any other number = error.
  */
-extern Gate* createLogicGates(unsigned char **, uint64_t);
+extern Gate *createLogicGates(unsigned char **, uint64_t);
 
 /**
  * Fill data from a file into array of struct.
@@ -126,8 +130,18 @@ extern Gate* createLogicGates(unsigned char **, uint64_t);
  * @param [ uint8_t ]: how many lines were red from a file.
  * @return [ _Bool ]: 0 if everything went good, 1 if error.
  */
-extern Gate* fillLogicGates(unsigned char**, uint64_t);
+extern Gate *fillLogicGates(unsigned char **, uint64_t);
 
-uint64_t isFound(size_t*, size_t*, uint64_t);
-uint64_t isFoundLogicGate(size_t* pattern, Gate* source, uint64_t size);
+uint64_t isFound(size_t *, size_t *, uint64_t);
+
+uint64_t isFoundLogicGate(size_t *pattern, Gate *source, uint64_t size);
+
 #endif
+
+void runSimulator(Gate *system, uint64_t systemElements);
+
+void updateGates(Gate *system, uint64_t systemElements, uint64_t timer);
+
+void fancyOutput(Gate *system, uint64_t systemElements);
+
+void calculateGates(Gate *system, uint64_t systemElements, uint64_t timer);

@@ -2,8 +2,7 @@
 
 #include "funcs.h"
 
-
-Gate *part1(uint64_t *bufferLines, char **argv) {
+Gate *digitalSimulator(uint64_t *bufferLines, char **argv) {
 
     unsigned char **buffer = readFile(bufferLines, (unsigned char *) argv[2]);
 
@@ -24,10 +23,7 @@ Gate *part1(uint64_t *bufferLines, char **argv) {
 
     Gate *logicGateArray = fillLogicGates(buffer, *bufferLines);
 
-    for (int i = 0; i < *bufferLines; ++i) {
-        printf("{%s, %d, %d, %d, %d}\n", logicGateArray[i].name, logicGateArray[i].type, logicGateArray[i].output.value,
-               logicGateArray[i].delay, logicGateArray[i].inputAmount);
-    }
-    return logicGateArray;
+    runSimulator(logicGateArray, *bufferLines);
 
+    return logicGateArray;
 }
