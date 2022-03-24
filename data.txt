@@ -1,0 +1,9 @@
+x or 2 t1 t2
+y nor 1 t2 t3
+t1 nor 1 a c
+t2 and 2 a c
+t3 and 2 c bi
+bi not 0 b
+a gen 400 0
+b gen 200 0
+c gen 100 0

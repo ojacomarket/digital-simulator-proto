@@ -1,17 +1,20 @@
-#include <stdint.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#define CUTILS
+
+#include "cutils.h"
+#include "boolean/boolean.h"
 
 #define MAX_FILE_LINES 100 // Maximum length of each line in a file is 100 symbols.
 #define MAX_INPUT 3 // Only 3 input wires are allowed for given logic gate.
 #define STATE 0b00000001 // Binary representation of FLAG, where we use bit shifting to alter program states.
+#define LOGIC_GATES_IN_USE 7
+#define MODERN_PC 64
+#define GATE_NAME 10
 
 /**
  * Enum that holds possible logic gates for this program.
  */
 enum LOGIC_GATES_ENUM {
-    not = 0, and, or, xor, nand, nor, gen
+    not_e = 0, and_e, or_e, xor_e, nand_e, nor_e, gen_e
 };
 
 /**
@@ -24,21 +27,23 @@ enum PROGRAM_STATES_ENUM {
 /**
  * Template for storing parsed data, any other format is prohibited.
  */
-struct gate {
-    int value; // Current value of a logic gate output.
-    unsigned char name[10]; // Logic gate unique name.
-    int time; // Timestamp, that will indicate the moment of changing a signal value (value of logic gate output).
-    enum LOGIC_GATES_ENUM logic_gate; // Type of logic gate.
-    int *inputs[MAX_INPUT]; // Logic gate dependencies, we restrict it to have MAX 3 input wires for given logic gate.
-};
-
+#pragma push(1)
+typedef struct {
+    Boolean output;
+    Boolean** inputValues;
+    uint8_t inputAmount;
+    uint16_t delay; // Timestamp, that will indicate the moment of changing a signal value (value of logic gate output).
+    unsigned char name[GATE_NAME]; // Logic gate unique name.
+    LogicGate type; // Type of logic gate.
+} Gate;
+#pragma pop(0)
 /**
  * Read file, parse into struct.
- * @param [ uint8_t ]: variable, that will store how many lines were red from a file.
+ * @param [ uint64_t ]: variable, that will store how many lines were red from a file.
  * @param [ struct gate*** ]: custom data type, that will store parsed data.
  * @param [ char** ]: terminal arguments (file name).
  */
-extern void part1(uint8_t *, struct gate ***, char **);
+extern Gate* part1(uint64_t *, char **);
 
 // If you find "#define AUTHORIZED" in some file's head, then know, that it can "see" following contents.
 #ifdef AUTHORIZED_1
@@ -95,14 +100,6 @@ const char *LOGIC_GATES[] = {
 };
 
 /**
- * Error indicator.
- * @param [ uint8_t ]: file line.
- * @param [ uint8_t ]: file column.
- * @param [ char ]: what type of problem 'r' = reading file, 'f' = parsing a file.
- */
-extern void panic(uint8_t, uint8_t, char );
-
-/**
  * Refresh array.
  * @param [ unsigned char* ]: array to flush.
  * @param [ int ]: how many symbols we wish to flush.
@@ -114,21 +111,13 @@ extern void flush(unsigned char *, int);
 #ifdef AUTHORIZED_2 // New content for different authorized files.
 
 /**
- * Read a file.
- * @param [ char** ]: buffer with raw data.
- * @param [ char** ]: arguments from command line.
- * @return [ uint8_t ]: How many lines of file were actually red.
- */
-extern uint8_t read(char **, char **);
-
-/**
  * Read logic gate names from buffer.
  * @param [ struct gate* ]: struct that will be fill particularly.
  * @param [ char** ]: buffer with raw data.
  * @param [ uint8_t ]: size of buffer's line length.
  * @return [ int ]: 0 if good, any other number = error.
  */
-extern int read_logic_gate_names(struct gate **, char **, uint8_t);
+extern Gate* createLogicGates(unsigned char **, uint64_t);
 
 /**
  * Fill data from a file into array of struct.
@@ -137,6 +126,8 @@ extern int read_logic_gate_names(struct gate **, char **, uint8_t);
  * @param [ uint8_t ]: how many lines were red from a file.
  * @return [ _Bool ]: 0 if everything went good, 1 if error.
  */
-extern _Bool fill(struct gate **, char *[MAX_FILE_LINES], uint8_t);
+extern Gate* fillLogicGates(unsigned char**, uint64_t);
 
+uint64_t isFound(size_t*, size_t*, uint64_t);
+uint64_t isFoundLogicGate(size_t* pattern, Gate* source, uint64_t size);
 #endif
