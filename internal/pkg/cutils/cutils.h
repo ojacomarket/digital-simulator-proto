@@ -5,11 +5,8 @@
 #include <string.h>
 #include <stdint.h>
 
-/** readtxt **/
 #define SIMPLE_TXT 100
-#define SCIENTIFIC_TXT 500
 #define REALLOC_THRESHOLD 1000
-/*************/
 
 /**
  * Error handler.
@@ -23,6 +20,6 @@ void panic(unsigned char error);
  * @param filename File name to read data from.
  * @return Buffer.
  */
-unsigned char **readFile(uint64_t *fileRows, const unsigned char *filename);
+unsigned char **readf(uint64_t *fileRows, const unsigned char *filename);
 
 #endif

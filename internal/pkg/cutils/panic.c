@@ -1,14 +1,10 @@
 #define CUTILS
-
-#include "cutils.h"
-
 void panic(unsigned char error) {
-
     switch (error) {
-        case 'f': // reading a file.
+        case 'f':
             printf("\ncannot read a file\n");
             exit(1);
-        case 'p': // parsing data from a file.
+        case 'p':
             printf("\nunexpected character found in a file\n");
             exit(1);
         case 'w':

@@ -1,57 +1,50 @@
 #define CUTILS
+#define BOOLEAN
 
-#include "cutils.h"
-#include "boolean/boolean.h"
+#include "../pkg/cutils/cutils.h"
+#include "../pkg/boolean/boolean.h"
+#include <time.h>
 
-#define MAX_FILE_LINES 100 // Maximum length of each line in a file is 100 symbols.
-#define MAX_INPUT 3 // Only 3 input wires are allowed for given logic gate.
 #define STATE 0b00000001 // Binary representation of FLAG, where we use bit shifting to alter program states.
-#define LOGIC_GATES_IN_USE 7
-#define MODERN_PC 64
-#define GATE_NAME 10
-
-/**
- * Enum that holds possible logic gates for this program.
- */
-enum LOGIC_GATES_ENUM {
-    not_e = 0, and_e, or_e, xor_e, nand_e, nor_e, gen_e
-};
+#define KNOWN_LOGIC_GATES 7
+#define MODERN_PC_64BIT 64
+#define GATE_NAME_MAXLEN 10
 
 /**
  * Enum that holds possible states of parsing process (FILE SHOULD HAVE DEFINITE STRUCTURE).
  */
-enum PROGRAM_STATES_ENUM {
-    begin = 0, next, name, gate, time, values, endline
+enum ParserState {
+    begin = 0, next, name, gate, delays, values, endline
 };
 
 /**
- * Template for storing parsed data, any other format is prohibited.
+ * Logic gate format.
  */
 #pragma push(1)
 typedef struct {
-    Boolean output;
-    _Bool valuesHasBeenChanged;
-    Boolean **inputValues;
-    Boolean buffer;
-    uint8_t inputAmount;
-    uint16_t delay; // Timestamp, that will indicate the moment of changing a signal value (value of logic gate output).
-    uint64_t timing;
-    unsigned char name[GATE_NAME]; // Logic gate unique name.
-    LogicGate type; // Type of logic gate.
-} Gate;
+    Boolean out; // pin out
+    _Bool isBufferChanged; // tracks state of input pin's abs value
+    Boolean **in; // pin in
+    Boolean buffer; // abs value of input pins
+    uint8_t inPins; // amount of input pins
+    uint16_t delay; // reaction time of a logic gate
+    uint64_t changesAt; // time, when logic gate changes its value
+    unsigned char name[GATE_NAME_MAXLEN]; // logic gate unique name.
+    LogicType type; // type of logic gate.
+} LogicGate;
 #pragma pop(0)
 
+#ifdef DIGISIM
 /**
- * Read file, parse into struct.
- * @param [ uint64_t ]: variable, that will store how many lines were red from a file.
- * @param [ struct gate*** ]: custom data type, that will store parsed data.
- * @param [ char** ]: terminal arguments (file name).
+ * Run digital simulator from an input file, write wave results to a file.
+ * @param fileRows input file rows
+ * @param filename input file name
+ * @param duration duration of simulation
+ * @return 0 of simulation went ok, 1 if not
  */
-extern Gate *digitalSimulator(uint64_t *bufferLines, char **argv);
-
-// If you find "#define AUTHORIZED" in some file's head, then know, that it can "see" following contents.
-#ifdef AUTHORIZED_1
-
+extern _Bool digisim(uint64_t *, char *, char *);
+#endif
+#ifdef FILL
 /**
  * Lookup table has 256 numbers in it, where we match ASCII symbol to some number:
  * a) A-Za-z: 1
@@ -102,6 +95,7 @@ const char *LOGIC_GATES[] = {
         "nor",
         "gen"
 };
+#endif
 
 /**
  * Refresh array.
@@ -110,18 +104,7 @@ const char *LOGIC_GATES[] = {
  */
 extern void flush(unsigned char *, int);
 
-#endif
-
-#ifdef AUTHORIZED_2 // New content for different authorized files.
-
-/**
- * Read logic gate names from buffer.
- * @param [ struct gate* ]: struct that will be fill particularly.
- * @param [ char** ]: buffer with raw data.
- * @param [ uint8_t ]: size of buffer's line length.
- * @return [ int ]: 0 if good, any other number = error.
- */
-extern Gate *createLogicGates(unsigned char **, uint64_t);
+#include <stdlib.h>
 
 /**
  * Fill data from a file into array of struct.
@@ -130,18 +113,32 @@ extern Gate *createLogicGates(unsigned char **, uint64_t);
  * @param [ uint8_t ]: how many lines were red from a file.
  * @return [ _Bool ]: 0 if everything went good, 1 if error.
  */
-extern Gate *fillLogicGates(unsigned char **, uint64_t);
+extern LogicGate *lparse(unsigned char **buffer, uint64_t lines);
 
-uint64_t isFound(size_t *, size_t *, uint64_t);
 
-uint64_t isFoundLogicGate(size_t *pattern, Gate *source, uint64_t size);
+/**
+ * Read logic gate names from buffer.
+ * @param [ struct gate* ]: struct that will be parse particularly.
+ * @param [ char** ]: buffer with raw data.
+ * @param [ uint8_t ]: size of buffer's line length.
+ * @return [ int ]: 0 if good, any other number = error.
+ */
+LogicGate *lcreate(unsigned char **buffer, uint64_t lines,
+                   const unsigned char LUT[]);
 
-#endif
+uint64_t lindex(size_t *pattern, size_t *source, uint64_t size);
 
-void runSimulator(Gate *system, uint64_t systemElements);
+uint64_t lname(size_t *pattern, LogicGate *source, uint64_t size);
 
-void updateGates(Gate *system, uint64_t systemElements, uint64_t timer);
 
-void fancyOutput(Gate *system, uint64_t systemElements);
+void simulate(LogicGate *, uint64_t, const uint64_t *);
 
-void calculateGates(Gate *system, uint64_t systemElements, uint64_t timer);
+void lupdate(LogicGate *system, uint64_t systemElements, uint64_t timer, FILE *);
+
+/**
+ * Write to file.
+ * @param Logic gate array
+ * @param Gates amount
+ * @return Pointer to the opened file (use it in simulate.c to parse in values)
+ */
+FILE *output(LogicGate *, uint64_t);

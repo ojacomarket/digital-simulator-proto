@@ -2,7 +2,7 @@
 
 #include "cutils.h"
 
-unsigned char **readFile(uint64_t *fileRows, const unsigned char *filename) {
+unsigned char **readf(uint64_t *fileRows, const unsigned char *filename) {
 
     // 1. Rows tracker used to track, when file row is ended.
     int rowsTracker = 1;
