@@ -29,22 +29,22 @@ typedef struct {
     uint8_t inPins; // amount of input pins
     uint16_t delay; // reaction time of a logic gate
     uint64_t changesAt; // time, when logic gate changes its value
-    unsigned char name[GATE_NAME_MAXLEN]; // logic gate unique name.
-    LogicType type; // type of logic gate.
+    unsigned char name[GATE_NAME_MAXLEN]; // logic gate unique name
+    LogicType type; // type of logic gate
 } LogicGate;
 #pragma pop(0)
 
 #ifdef DIGISIM
 /**
  * Run digital simulator from an input file, write wave results to a file.
- * @param fileRows input file rows
- * @param filename input file name
- * @param duration duration of simulation
+ * @param i input file rows
+ * @param f input file name
+ * @param t duration of simulation
  * @return 0 of simulation went ok, 1 if not
  */
-extern _Bool digisim(uint64_t *, char *, char *);
+extern _Bool digisim(uint64_t *i, char *f, char *t);
 #endif
-#ifdef FILL
+#ifdef PARSER
 /**
  * Lookup table has 256 numbers in it, where we match ASCII symbol to some number:
  * a) A-Za-z: 1
@@ -86,7 +86,7 @@ unsigned char LUT[] = {
 /**
  * All possible logic gates we can use in our program (only used to COMPARE contents from parsed file).
  */
-const char *LOGIC_GATES[] = {
+const char *BUILTIN[] = {
         "not",
         "and",
         "or",
@@ -98,47 +98,62 @@ const char *LOGIC_GATES[] = {
 #endif
 
 /**
- * Refresh array.
- * @param [ unsigned char* ]: array to flush.
- * @param [ int ]: how many symbols we wish to flush.
- */
-extern void flush(unsigned char *, int);
-
-#include <stdlib.h>
-
-/**
- * Fill data from a file into array of struct.
- * @param [ struct gate* ]: array of struct.
- * @param [ char*[] ]: buffer with raw data.
- * @param [ uint8_t ]: how many lines were red from a file.
- * @return [ _Bool ]: 0 if everything went good, 1 if error.
+ * Parse data from a buffer.
+ * @param buffer raw data
+ * @param lines file rows
+ * @return complete logic gates in a form of C struct array
  */
 extern LogicGate *lparse(unsigned char **buffer, uint64_t lines);
 
-
 /**
- * Read logic gate names from buffer.
- * @param [ struct gate* ]: struct that will be parse particularly.
- * @param [ char** ]: buffer with raw data.
- * @param [ uint8_t ]: size of buffer's line length.
- * @return [ int ]: 0 if good, any other number = error.
+ * Initialize logic gates as a C struct array (fill logic gate names).
+ * @param buffer raw data
+ * @param lines  file rows
+ * @param LUT  lookup table for ascii symbols
+ * @return logic gates in a form of C struct array with only names filled
  */
-LogicGate *lcreate(unsigned char **buffer, uint64_t lines,
+extern LogicGate *lcreate(unsigned char **buffer, uint64_t lines,
                    const unsigned char LUT[]);
 
-uint64_t lindex(size_t *pattern, size_t *source, uint64_t size);
+/**
+ * Get index of pattern "p" from a source "s".
+ * @param p pattern (size < unsigned long)
+ * @param s source (size < unsigned long)
+ * @param size size of source
+ * @return index
+ */
+extern uint64_t lindex(size_t *p, size_t *s, uint64_t size);
 
-uint64_t lname(size_t *pattern, LogicGate *source, uint64_t size);
+/**
+ * Get index of pattern "p" from a logic gates "g".
+ * @param p pattern (size < unsigned long)
+ * @param g logic gates
+ * @param size size of gate
+ * @return index
+ */
+uint64_t lname(size_t *p, LogicGate *g, uint64_t size);
 
+/**
+ * Run simulator.
+ * @param g logic gates array
+ * @param r file rows
+ * @param t current timer value
+ */
+extern void simulate(LogicGate *g, uint64_t r, const uint64_t * t);
 
-void simulate(LogicGate *, uint64_t, const uint64_t *);
-
-void lupdate(LogicGate *system, uint64_t systemElements, uint64_t timer, FILE *);
+/**
+ *
+ * @param g logic gates array
+ * @param r file rows
+ * @param t current timer value
+ * @param f pointer to the file we write output into
+ */
+extern void lupdate(LogicGate *g, uint64_t r, uint64_t t, FILE *f);
 
 /**
  * Write to file.
- * @param Logic gate array
- * @param Gates amount
- * @return Pointer to the opened file (use it in simulate.c to parse in values)
+ * @param g logic gate array
+ * @param r file rows
+ * @return pointer to the file we write output into
  */
-FILE *output(LogicGate *, uint64_t);
+extern FILE *output(LogicGate *g, uint64_t r);

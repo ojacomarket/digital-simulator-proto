@@ -1,8 +1,9 @@
 #include "../../funcs.h"
 
-FILE* output(LogicGate *gates, uint64_t size) {
+FILE *output(LogicGate *gates, uint64_t size) {
+
     FILE *p = fopen("wave.vcd", "wt");
-    time_t now = time(NULL); // get current delays
+    time_t now = time(NULL); // get current time
     struct tm *s = gmtime(&now);
     fprintf(p, "$date\n"
                "     %d %d, %d       %d:%d:%d\n"
@@ -18,7 +19,7 @@ FILE* output(LogicGate *gates, uint64_t size) {
                "\n"
                "$scope module Test $end\n", s->tm_mon, s->tm_mday, s->tm_year, s->tm_hour, s->tm_min, s->tm_sec);
     for (int i = 0; i < size; ++i) {
-        fprintf(p,"$var wire    %hu  %s  %s       $end\n", gates[i].delay, gates[i].name, gates[i].name);
+        fprintf(p, "$var wire    %hu  %s  %s       $end\n", gates[i].delay, gates[i].name, gates[i].name);
     }
     fprintf(p, "$upscope $end\n"
                "$enddefinitions  $end\n"
@@ -29,9 +30,8 @@ FILE* output(LogicGate *gates, uint64_t size) {
                "\n"
                "$dumpvars\n");
     for (int i = 0; i < size; ++i) {
-        fprintf(p,"%d%s\n", gates[i].out.value, gates[i].name);
+        fprintf(p, "%d%s\n", gates[i].out.value, gates[i].name);
     }
     fprintf(p, "$end\n\n");
-    //  sleep(1);
     return p;
 }

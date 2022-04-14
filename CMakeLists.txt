@@ -3,7 +3,7 @@ project(TarkvaraProjektI C)
 
 set(CMAKE_C_STANDARD 11)
 
-add_executable(TarkvaraProjektI
+add_executable(digisim
         cmd/main/main.c
         internal/app/digisim.c
         internal/app/funcs.h

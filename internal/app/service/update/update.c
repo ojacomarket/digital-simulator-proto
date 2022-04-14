@@ -1,31 +1,34 @@
 #include "../../funcs.h"
 
-void lupdate(LogicGate *system, uint64_t systemElements, uint64_t timer, FILE* ptr) {
+void lupdate(LogicGate *g, uint64_t s, uint64_t timer, FILE *f) {
 
     uint64_t expires = 0;
-    for (int i = 0; i < systemElements; ++i) {
-
-        if (system[i].buffer.value != system[i].out.value && !system[i].isBufferChanged &&
-            system[i].type != gen) {
-            system[i].isBufferChanged = 1;
-            system[i].changesAt = timer + system[i].delay;
-        } else if (system[i].type == gen) {
-            if ((system[i].changesAt + system[i].delay) == timer) {
-                system[i].out.value = system[i].out.value + 1;
-                system[i].changesAt = timer;
+    for (int i = 0; i < s; ++i) {
+        // Value have been changed and gate isn't a gen.
+        if (g[i].buffer.value != g[i].out.value && !g[i].isBufferChanged &&
+            g[i].type != gen) {
+            g[i].isBufferChanged = 1;
+            g[i].changesAt = timer + g[i].delay;
+        }
+            // Gate is gen.
+        else if (g[i].type == gen) {
+            if ((g[i].changesAt + g[i].delay) == timer) {
+                g[i].out.value = g[i].out.value + 1;
+                g[i].changesAt = timer;
             }
         }
-
-        run(*system[i].in, &system[i].buffer, system[i].inPins,
-            system[i].type);
-        if (system[i].changesAt == timer && timer > 0 && system[i].type != gen) {
+        // Calculate gate buffer.
+        run(*g[i].in, &g[i].buffer, g[i].inPins,
+            g[i].type);
+        // If delay has expired and change had been occurred, then set output = buffer value.
+        if (g[i].changesAt == timer && timer > 0 && g[i].type != gen) {
             if (expires != timer) {
-                fprintf(ptr, "\n#%lu\n", timer);
+                fprintf(f, "\n#%lu\n", timer);
                 expires = timer;
             }
-            fprintf(ptr, "%d%s\n", system[i].out.value, system[i].name);
-            system[i].out.value = system[i].buffer.value;
-            system[i].isBufferChanged = 0;
+            fprintf(f, "%d%s\n", g[i].out.value, g[i].name);
+            g[i].out.value = g[i].buffer.value;
+            g[i].isBufferChanged = 0;
         }
     }
 }

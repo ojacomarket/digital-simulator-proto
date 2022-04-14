@@ -1,11 +1,14 @@
 #define CUTILS
-void panic(unsigned char error) {
-    switch (error) {
+
+#include "cutils.h"
+
+void panic(unsigned char e) {
+    switch (e) {
         case 'f':
             printf("\ncannot read a file\n");
             exit(1);
         case 'p':
-            printf("\nunexpected character found in a file\n");
+            printf("\nunexpected characters were found in a file\n");
             exit(1);
         case 'w':
             printf("\ncannot write to the file\n");
@@ -14,7 +17,7 @@ void panic(unsigned char error) {
             printf("\ncannot process user input\n");
             exit(1);
         default:
-            printf("\ncannot handle error type -> [ %c ]\n", error);
+            printf("\ncannot handle error type -> [ %c ]\n", e);
             exit(1);
     }
 }

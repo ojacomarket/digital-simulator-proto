@@ -1,6 +1,13 @@
 #define DIGISIM
+
 #include "../../internal/app/funcs.h"
 
+/**
+ * Check terminal params.
+ * @param args # of terminal arguments
+ * @param cli terminal arguments
+ * @return 0 if ok, 1 if error
+ */
 extern _Bool cliHandler(int, char **);
 
 /**
@@ -14,7 +21,6 @@ int main(int argc, char **argv) {
     uint64_t fileRows = 0;
     if (cliHandler(argc, argv))
         return 1;
-    digisim(&fileRows, argv[2], argv[4]);
-    return 0;
+    return digisim(&fileRows, argv[2], argv[4]);;
 }
 

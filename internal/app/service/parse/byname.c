@@ -1,15 +1,11 @@
 #include "../../funcs.h"
 
-uint64_t lname(size_t *pattern, LogicGate *source, uint64_t size) {
+uint64_t lname(size_t *p, LogicGate *g, uint64_t size) {
 
-    uint8_t coincidence;
+    uint8_t absent;
     for (int i = 0; i < size; ++i) {
-
-        // We check logic gate type from pre-defined list of logic gates.
-        coincidence = strcmp((const char *) pattern, (const char *) source[i].name);
-
-        // If logic gate type is valid.
-        if (!coincidence) {
+        absent = strcmp((const char *) p, (const char *) g[i].name);
+        if (!absent) {
             return i;
         }
     }

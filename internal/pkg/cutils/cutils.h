@@ -1,3 +1,4 @@
+// Allows you to perform common tasks, such as reading a file, error handling.
 #ifdef CUTILS
 
 #include <stdio.h>
@@ -10,16 +11,16 @@
 
 /**
  * Error handler.
- * @param error 'f' - read a file, 'p' - parse a file, 'w' - write to a file
+ * @param e error type:'f' - read a file, 'p' - parse a file, 'w' - write to a file, 'i' - terminal input error
  */
-void panic(unsigned char error);
+extern void panic(unsigned char e);
 
 /**
  * Read any sized txt file and store into buffer.
- * @param fileRows Pointer to the integer, that will store rows # from a file.
- * @param filename File name to read data from.
- * @return Buffer.
+ * @param rows is a pointer to the integer, that will store rows # from a file
+ * @param file name to read data from
+ * @return buffer
  */
-unsigned char **readf(uint64_t *fileRows, const unsigned char *filename);
+extern unsigned char **readf(uint64_t *rows, const unsigned char *file);
 
 #endif

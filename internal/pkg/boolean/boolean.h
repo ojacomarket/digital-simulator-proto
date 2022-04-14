@@ -1,4 +1,6 @@
+// Allows you to safely implement Boolean algebra for well-known gates.
 #ifdef BOOLEAN
+
 #include <stdint.h>
 #include <stdlib.h>
 
@@ -8,16 +10,17 @@ typedef enum {
 
 #pragma push(1)
 typedef struct {
-    uint8_t value:1;
+    uint8_t value: 1;
 } Boolean;
 #pragma pop(0)
 
 /**
  * Generate logic gate output.
- * @param input array of input pins values
- * @param output value of logic gate
- * @param pins amount of inputs into gate
- * @param type gate type
+ * @param in array of input pins values
+ * @param out output of a logic gate
+ * @param s amount of input pins into gate
+ * @param type logic gate type
  */
-void run(Boolean *input, Boolean *output, size_t pins, LogicType type);
+extern void run(Boolean *in, Boolean *out, size_t s, LogicType type);
+
 #endif

@@ -1,13 +1,10 @@
 #include "../../internal/app/funcs.h"
 
+/**
+ * Terminal output "how to".
+ */
 extern void usage();
 
-/**
- * Check terminal params.
- * @param arguments amount
- * @param arguments
- * @return 0 if ok, 1 if error
- */
 _Bool cliHandler(int args, char **cli) {
 
     if (args != 5) {
@@ -21,9 +18,6 @@ _Bool cliHandler(int args, char **cli) {
     return 0;
 }
 
-/**
- * Terminal output "how to".
- */
 void usage() {
 
     printf("digisim: usage: \"digisim -f <file> --simulate <duration>\"\n");
