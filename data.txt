@@ -6,4 +6,4 @@ t3 and 2 c bi
 bi not 1 b
 a gen 1 0
 b gen 3 0
-c gen 4 0
+c gen 1 0

@@ -13,13 +13,13 @@ void lupdate(LogicGate *g, uint64_t s, uint64_t timer, FILE *f) {
             // Gate is gen.
         else if (g[i].type == gen) {
             if ((g[i].changesAt + g[i].delay) == timer) {
+                g[i].out.value = g[i].out.value + 1;
+                g[i].changesAt = timer;
                 if (expires != timer) {
                     fprintf(f, "\n#%lu\n", timer);
                     expires = timer;
                 }
                 fprintf(f, "%d%s\n", g[i].out.value, g[i].name);
-                g[i].out.value = g[i].out.value + 1;
-                g[i].changesAt = timer;
             }
         }
         // Calculate gate buffer.
@@ -27,13 +27,13 @@ void lupdate(LogicGate *g, uint64_t s, uint64_t timer, FILE *f) {
             g[i].type);
         // If delay has expired and change had been occurred, then set output = buffer value.
         if (g[i].changesAt == timer && timer > 0 && g[i].type != gen) {
+            g[i].out.value = g[i].buffer.value;
+            g[i].isBufferChanged = 0;
             if (expires != timer) {
                 fprintf(f, "\n#%lu\n", timer);
                 expires = timer;
             }
             fprintf(f, "%d%s\n", g[i].out.value, g[i].name);
-            g[i].out.value = g[i].buffer.value;
-            g[i].isBufferChanged = 0;
         }
     }
 }

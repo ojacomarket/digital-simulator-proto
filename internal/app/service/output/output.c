@@ -19,7 +19,7 @@ FILE *output(LogicGate *gates, uint64_t size) {
                "\n"
                "$scope module Test $end\n", s->tm_mon, s->tm_mday, s->tm_year, s->tm_hour, s->tm_min, s->tm_sec);
     for (int i = 0; i < size; ++i) {
-        fprintf(p, "$var wire    %hu  %s  %s       $end\n", gates[i].delay, gates[i].name, gates[i].name);
+        fprintf(p, "$var wire    %hu  %s  %s       $end\n", 1, gates[i].name, gates[i].name);
     }
     fprintf(p, "$upscope $end\n"
                "$enddefinitions  $end\n"
