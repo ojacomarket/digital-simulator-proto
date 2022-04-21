@@ -13,6 +13,11 @@ void lupdate(LogicGate *g, uint64_t s, uint64_t timer, FILE *f) {
             // Gate is gen.
         else if (g[i].type == gen) {
             if ((g[i].changesAt + g[i].delay) == timer) {
+                if (expires != timer) {
+                    fprintf(f, "\n#%lu\n", timer);
+                    expires = timer;
+                }
+                fprintf(f, "%d%s\n", g[i].out.value, g[i].name);
                 g[i].out.value = g[i].out.value + 1;
                 g[i].changesAt = timer;
             }
