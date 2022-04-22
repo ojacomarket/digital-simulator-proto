@@ -21,6 +21,6 @@ typedef struct {
  * @param s amount of input pins into gate
  * @param type logic gate type
  */
-extern void run(Boolean *in, Boolean *out, size_t s, LogicType type);
+extern void run(Boolean **in, Boolean *out, uint8_t s, LogicType type);
 
 #endif

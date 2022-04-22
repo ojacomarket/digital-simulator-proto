@@ -23,7 +23,7 @@ void lupdate(LogicGate *g, uint64_t s, uint64_t timer, FILE *f) {
             }
         }
         // Calculate gate buffer.
-        run(*g[i].in, &g[i].buffer, g[i].inPins,
+        run(g[i].in, &g[i].buffer, g[i].inPins,
             g[i].type);
         // If delay has expired and change had been occurred, then set output = buffer value.
         if (g[i].changesAt == timer && timer > 0 && g[i].type != gen) {
