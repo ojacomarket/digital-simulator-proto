@@ -150,6 +150,9 @@ extern void simulate(LogicGate *g, uint64_t r, const uint64_t * t);
  */
 extern void lupdate(LogicGate *g, uint64_t r, uint64_t t, FILE *f);
 
+//extern void lchange(LogicGate *g, uint64_t s, uint64_t timer, FILE *f, uint8_t *fire);
+extern void lchange(LogicGate *g, uint64_t s, uint64_t timer, FILE *f);
+extern void lrun(LogicGate *g, uint64_t s);
 /**
  * Write to file.
  * @param g logic gate array
